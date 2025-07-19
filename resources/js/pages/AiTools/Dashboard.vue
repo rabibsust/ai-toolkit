@@ -21,7 +21,7 @@
               <textarea
                 id="code-input"
                 v-model="codeInput"
-                class="w-full h-64 p-3 border rounded-md font-mono text-sm"
+                class="w-full h-64 p-3 border rounded-md font-mono text-sm mt-4"
                 placeholder="<?php
 
 class UserController extends Controller
@@ -97,37 +97,37 @@ class UserController extends Controller
                     </h3>
 
                     <div class="grid gap-4">
-                    <div
-                        v-for="(suggestion, index) in analysis.suggestions"
-                        :key="index"
-                        class="bg-white border border-gray-200 rounded-lg p-4 shadow-sm hover:shadow-md transition-shadow"
-                    >
-                        <div class="flex items-start space-x-3">
-                        <div class="flex-shrink-0 w-6 h-6 bg-yellow-100 rounded-full flex items-center justify-center mt-0.5">
-                            <span class="text-xs font-semibold text-yellow-600">{{ index + 1 }}</span>
+                        <div
+                            v-for="(suggestion, index) in analysis.suggestions"
+                            :key="index"
+                            class="bg-white border border-gray-200 rounded-lg p-4 shadow-sm hover:shadow-md transition-shadow"
+                        >
+                            <div class="flex items-start space-x-3">
+                                <div class="flex-shrink-0 w-6 h-6 bg-yellow-100 rounded-full flex items-center justify-center mt-0.5">
+                                    <span class="text-xs font-semibold text-yellow-600">{{ index + 1 }}</span>
+                                </div>
+                                <div class="flex-1">
+                                    <p class="text-gray-800 leading-relaxed">{{ suggestion }}</p>
+                                </div>
+                            </div>
                         </div>
-                        <div class="flex-1">
-                            <p class="text-gray-800 leading-relaxed">{{ suggestion }}</p>
-                        </div>
-                        </div>
-                    </div>
                     </div>
                 </div>
 
                 <!-- Detailed Analysis -->
                 <div class="bg-white border border-gray-200 rounded-lg overflow-hidden">
                     <div class="bg-gray-50 px-6 py-3 border-b border-gray-200">
-                    <h3 class="text-lg font-semibold text-gray-900 flex items-center">
-                        <svg class="w-5 h-5 mr-2 text-green-500" fill="currentColor" viewBox="0 0 20 20">
-                        <path fill-rule="evenodd" d="M3 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z" clip-rule="evenodd"></path>
-                        </svg>
-                        Detailed Analysis
-                    </h3>
+                        <h3 class="text-lg font-semibold text-gray-900 flex items-center">
+                            <svg class="w-5 h-5 mr-2 text-green-500" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M3 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z" clip-rule="evenodd"></path>
+                            </svg>
+                            Detailed Analysis
+                        </h3>
                     </div>
                     <div class="p-6">
-                    <div class="bg-gray-50 rounded-md p-4 max-h-96 overflow-y-auto">
-                        <pre class="whitespace-pre-wrap text-sm text-gray-700 font-mono leading-relaxed">{{ analysis.analysis }}</pre>
-                    </div>
+                        <div class="bg-gray-50 rounded-md p-4 max-h-96 overflow-y-auto">
+                            <pre class="whitespace-pre-wrap text-sm text-gray-700 font-mono leading-relaxed">{{ analysis.analysis }}</pre>
+                        </div>
                     </div>
                 </div>
 
@@ -243,9 +243,6 @@ const saveAnalysis = async () => {
 
   // Fix: Ensure suggestions is always an array
   const suggestionsArray = analysis.value.suggestions || []
-
-  console.log(analysis.value.suggestions);
-
 
   try {
     const response = await fetch('/api/save-analysis', {

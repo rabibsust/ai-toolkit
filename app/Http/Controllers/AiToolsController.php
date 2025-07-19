@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\CodeAnalysis;
 use Illuminate\Http\Request;
 use App\Services\AiAnalyzerService;
+use Inertia\Inertia;
 
 class AiToolsController extends Controller
 {
@@ -55,6 +56,16 @@ class AiToolsController extends Controller
             'status' => 'success',
             'message' => 'Analysis saved successfully!',
             'id' => $codeAnalysis->id
+        ]);
+    }
+
+    public function history()
+    {
+        $analyses = CodeAnalysis::latest()
+            ->get(['id', 'file_name', 'score', 'created_at']);
+
+        return Inertia::render('AiTools/History', [
+            'analyses' => $analyses
         ]);
     }
 }
