@@ -45,7 +45,7 @@ A modern, AI-powered Laravel development toolkit that analyzes code quality, pro
 
 1. **Clone the repository**
    ```bash
-   git clone https://github.com/yourusername/ai-toolkit.git
+   git clone https://github.com/rabibsust/ai-toolkit.git
    cd ai-toolkit
    ```
 
@@ -294,7 +294,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 - **Documentation**: [Wiki](https://github.com/rabibsust/ai-toolkit/wiki)
 - **Issues**: [GitHub Issues](https://github.com/rabibsust/ai-toolkit/issues)
 - **Discussions**: [GitHub Discussions](https://github.com/rabibsust/ai-toolkit/discussions)
-- **Email**: support@youraitooltkit.com
+- **Email**: rabib.sust@gmail.com
 
 ## 🌟 Acknowledgments
 
