@@ -5,4 +5,5 @@ use App\Http\Controllers\AiToolsController;
 
 Route::post('/analyze-code', [AiToolsController::class, 'analyzeCode']);
 Route::post('/save-analysis', [AiToolsController::class, 'saveAnalysis']);
+Route::get('/analysis/{id}', [AiToolsController::class, 'getAnalysis']);
 

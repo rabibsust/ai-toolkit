@@ -68,4 +68,21 @@ class AiToolsController extends Controller
             'analyses' => $analyses
         ]);
     }
+
+    public function getAnalysis($id)
+    {
+        $analysis = CodeAnalysis::find($id);
+
+        if (!$analysis) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Analysis not found'
+            ], 404);
+        }
+
+        return response()->json([
+            'status' => 'success',
+            'analysis' => $analysis
+        ]);
+    }
 }

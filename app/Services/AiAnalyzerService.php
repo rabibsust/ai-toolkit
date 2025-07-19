@@ -108,32 +108,61 @@ class AiAnalyzerService
     private function parseBulletPoints(string $text): array
     {
         $points = [];
-        $lines = explode("\n", trim($text));
+        $lines = explode("\n", $text);
+        $currentPoint = '';
+        $inCodeBlock = false;
+        $collectingPoint = false;
 
         foreach ($lines as $line) {
-            $line = trim($line);
+            $trimmedLine = trim($line);
 
-            // Handle both * and - bullet points
-            if (str_starts_with($line, '* ') || str_starts_with($line, '- ')) {
-                // Remove the bullet and **bold** formatting
-                $cleanLine = preg_replace('/^\*\s*\*\*(.*?)\*\*:?\s*/', '$1: ', $line);
-                $cleanLine = preg_replace('/^-\s*\*\*(.*?)\*\*:?\s*/', '$1: ', $cleanLine);
-                $cleanLine = preg_replace('/^\*\s*/', '', $cleanLine);
-                $cleanLine = preg_replace('/^-\s*/', '', $cleanLine);
+            // Check if this is a new bullet point
+            if (str_starts_with($trimmedLine, '* ') || str_starts_with($trimmedLine, '- ')) {
+                // Save previous point if exists
+                if (!empty($currentPoint) && $collectingPoint) {
+                    $points[] = trim($currentPoint);
+                }
 
-                // Remove any remaining ** formatting
-                $cleanLine = str_replace('**', '', $cleanLine);
-
-                // Clean up extra spaces
-                $cleanLine = trim($cleanLine);
-
-                if (!empty($cleanLine)) {
-                    $points[] = $cleanLine;
+                // Start new point
+                $currentPoint = $this->cleanBulletPoint($trimmedLine);
+                $collectingPoint = true;
+                $inCodeBlock = false;
+            }
+            // If we're collecting a point, add this line to it
+            elseif ($collectingPoint) {
+                // Check for code block markers
+                if (str_contains($trimmedLine, '```')) {
+                    $inCodeBlock = !$inCodeBlock;
+                    $currentPoint .= "\n" . $line; // Keep original indentation for code
+                }
+                // If we're in a code block or this line has content, add it
+                elseif ($inCodeBlock || !empty($trimmedLine)) {
+                    $currentPoint .= "\n" . $line; // Keep original indentation
+                }
+                // Empty line - add it if we're in a code block
+                elseif ($inCodeBlock) {
+                    $currentPoint .= "\n" . $line;
                 }
             }
         }
 
-        return $points;
+        // Don't forget the last point
+        if (!empty($currentPoint) && $collectingPoint) {
+            $points[] = trim($currentPoint);
+        }
+
+        return array_filter($points); // Remove any empty points
+    }
+
+    private function cleanBulletPoint(string $line): string
+    {
+        // Remove bullet point markers and clean up formatting
+        $cleanLine = preg_replace('/^\*\s*\*\*(.*?)\*\*:?\s*/', '$1: ', $line);
+        $cleanLine = preg_replace('/^-\s*\*\*(.*?)\*\*:?\s*/', '$1: ', $cleanLine);
+        $cleanLine = preg_replace('/^\*\s*/', '', $cleanLine);
+        $cleanLine = preg_replace('/^-\s*/', '', $cleanLine);
+
+        return trim($cleanLine);
     }
 
     /**
