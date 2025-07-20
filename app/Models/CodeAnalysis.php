@@ -11,11 +11,16 @@ class CodeAnalysis extends Model
         'analysis',
         'suggestions',
         'score',
-        'file_name'
+        'file_name',
+        'provider',
+        'cost',
+        'tokens_used'
     ];
 
     protected $casts = [
         'suggestions' => 'array',
-        'score' => 'integer'
+        'score' => 'integer',
+        'cost' => 'decimal:6',
+        'tokens_used' => 'integer'
     ];
 }

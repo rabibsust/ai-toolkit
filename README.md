@@ -135,29 +135,64 @@ class UserController extends Controller
 ### Backend (Laravel 12)
 ```
 app/
-├── Http/Controllers/
-│   └── AiToolsController.php     # Main controller
+├── Http/
+│   └── Controllers/
+│       └── AiToolsController.php     # Main controller for AI analysis
 ├── Services/
-│   └── AiAnalyzerService.php     # AI analysis logic
-└── Models/
-    └── CodeAnalysis.php          # Analysis storage model
+│   └── AiAnalyzerService.php         # AI analysis business logic
+├── Models/
+│   └── CodeAnalysis.php              # Analysis storage model
+└── Providers/
+    └── AppServiceProvider.php        # Service bindings
 ```
 
 ### Frontend (Vue 3 + TypeScript)
 ```
-resources/js/
-├── pages/AiTools/
-│   ├── Dashboard.vue             # Main analysis interface
-│   └── History.vue               # Analysis history
-├── components/ui/                # Reusable UI components
-└── layouts/
-    └── AppLayout.vue             # Application layout
+resources/
+├── js/
+│   ├── app.ts                        # Main application entry point
+│   ├── pages/
+│   │   └── AiTools/
+│   │       ├── Dashboard.vue         # Main analysis interface
+│   │       └── History.vue           # Analysis history view
+│   ├── components/
+│   │   └── ui/                       # Reusable UI components
+│   └── layouts/
+│       └── AppLayout.vue             # Application layout
+├── views/
+│   └── app.blade.php                 # Main Blade template with Inertia
+└── css/
+    └── app.css                       # Tailwind CSS styles
 ```
 
-### Database Schema
-```sql
--- code_analyses table
-id, code, analysis, suggestions, score, file_name, created_at, updated_at
+### Configuration & Routes
+```
+config/
+├── gemini.php                        # Gemini AI configuration
+└── app.php                           # Application settings
+
+routes/
+├── web.php                           # Web routes with Inertia
+└── api.php                           # API routes for analysis
+```
+
+### Database Structure
+```
+database/
+├── migrations/
+│   └── create_code_analyses_table.php # Analysis storage schema
+└── seeders/
+    └── DatabaseSeeder.php            # Database seeding
+```
+
+### Testing Structure
+```
+tests/
+├── Feature/
+│   ├── AiAnalysisTest.php            # Feature tests for AI analysis
+│   └── CodeAnalysisStorageTest.php   # Analysis storage tests
+└── Unit/
+    └── AiAnalyzerServiceTest.php     # Unit tests for AI service
 ```
 
 ## 🛠️ Technology Stack

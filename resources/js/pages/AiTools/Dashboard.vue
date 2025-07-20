@@ -16,6 +16,68 @@
             <CardDescription>Paste your Laravel controller code below</CardDescription>
           </CardHeader>
           <CardContent class="space-y-4">
+            <!-- AI Provider Selection -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <Label for="provider-select">AI Provider</Label>
+                <select
+                  id="provider-select"
+                  v-model="selectedProvider"
+                  @change="onProviderChange"
+                  class="w-full px-3 py-2 text-sm border border-gray-300 rounded-md focus:border-blue-500 focus:ring-2 focus:ring-blue-200 bg-white text-gray-900 mt-1"
+                >
+                  <option v-for="(provider, key) in availableProviders" :key="key" :value="key">
+                    {{ provider.name }}
+                  </option>
+                </select>
+              </div>
+
+              <div v-if="Object.keys(availableModels).length > 0">
+                <Label for="model-select">Model</Label>
+                <select
+                  id="model-select"
+                  v-model="selectedModel"
+                  class="w-full px-3 py-2 text-sm border border-gray-300 rounded-md focus:border-blue-500 focus:ring-2 focus:ring-blue-200 bg-white text-gray-900 mt-1"
+                >
+                  <option v-for="(model, key) in availableModels" :key="key" :value="key">
+                    {{ model.name }} - ${{ model.cost_per_request.toFixed(4) }}
+                  </option>
+                </select>
+                <p class="text-xs text-gray-500 mt-1">{{ selectedModelInfo?.description }}</p>
+              </div>
+            </div>
+
+            <!-- Analysis Options -->
+            <div class="grid grid-cols-2 gap-4">
+              <div>
+                <Label for="focus-area">Focus Area</Label>
+                <select
+                  id="focus-area"
+                  v-model="analysisOptions.focus"
+                  class="w-full px-3 py-2 text-sm border border-gray-300 rounded-md focus:border-blue-500 focus:ring-2 focus:ring-blue-200 bg-white text-gray-900 mt-1"
+                >
+                  <option value="general">General Analysis</option>
+                  <option value="security">Security Focus</option>
+                  <option value="performance">Performance Focus</option>
+                  <option value="best-practices">Best Practices</option>
+                </select>
+              </div>
+
+              <div>
+                <Label for="detail-level">Detail Level</Label>
+                <select
+                  id="detail-level"
+                  v-model="analysisOptions.detail"
+                  class="w-full px-3 py-2 text-sm border border-gray-300 rounded-md focus:border-blue-500 focus:ring-2 focus:ring-blue-200 bg-white text-gray-900 mt-1"
+                >
+                  <option value="brief">Brief</option>
+                  <option value="standard">Standard</option>
+                  <option value="detailed">Detailed</option>
+                </select>
+              </div>
+            </div>
+
+            <!-- Code Input -->
             <div>
               <Label for="code-input">Controller Code</Label>
               <textarea
@@ -33,9 +95,10 @@ class UserController extends Controller
 }"
               ></textarea>
             </div>
+
             <Button @click="analyzeCode" :disabled="isAnalyzing || !codeInput.trim()" class="w-full">
-              <span v-if="isAnalyzing">Analyzing...</span>
-              <span v-else>Analyze Code</span>
+              <span v-if="isAnalyzing">Analyzing with {{ currentProviderName }}...</span>
+              <span v-else>Analyze Code with {{ currentProviderName }}</span>
             </Button>
           </CardContent>
         </Card>
@@ -181,18 +244,67 @@ class UserController extends Controller
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref, computed, onMounted } from 'vue'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import AppLayout from '@/layouts/AppLayout.vue'
 
+const props = defineProps<{
+  recentAnalyses: Array<any>,
+  availableProviders: Record<string, any>  // Add this line
+}>()
+
 // Reactive data
 const codeInput = ref('')
 const analysis = ref(null)
 const isAnalyzing = ref(false)
 const error = ref('')
+const selectedProvider = ref('')
+const selectedModel = ref('')
+const analysisOptions = ref({
+  focus: 'general',
+  detail: 'standard'
+})
+
+const availableModels = computed(() => {
+  if (!selectedProvider.value) {
+    console.log('No provider selected')
+    return {}
+  }
+
+  const provider = props.availableProviders[selectedProvider.value]
+  if (!provider) {
+    console.log('Provider not found:', selectedProvider.value)
+    return {}
+  }
+
+  console.log('Provider models:', provider.models)
+  return provider.models || {}
+})
+
+
+const selectedModelInfo = computed(() => {
+  if (!selectedModel.value || !availableModels.value[selectedModel.value]) {
+    return null
+  }
+  return availableModels.value[selectedModel.value]
+})
+
+const currentProviderName = computed(() => {
+  if (!selectedProvider.value || !props.availableProviders[selectedProvider.value]) {
+    return 'AI'
+  }
+  return props.availableProviders[selectedProvider.value].name
+})
+
+const onProviderChange = () => {
+  // Reset model selection when provider changes
+  const models = availableModels.value
+  selectedModel.value = Object.keys(models)[0] || ''
+}
+
 
 // Methods
 const analyzeCode = async () => {
@@ -210,7 +322,10 @@ const analyzeCode = async () => {
         'Accept': 'application/json'
       },
       body: JSON.stringify({
-        code: codeInput.value
+        code: codeInput.value,
+        provider: selectedProvider.value,
+        model: selectedModel.value,
+        options: analysisOptions.value
       })
     })
 
@@ -304,4 +419,19 @@ const formatSuggestion = (suggestion: string) => {
 
   return formatted
 }
+
+onMounted(() => {
+  console.log('onMounted - availableProviders:', props.availableProviders)
+
+  const providers = Object.keys(props.availableProviders)
+  console.log('Available provider keys:', providers)
+
+  if (providers.length > 0) {
+    selectedProvider.value = providers[0]
+    console.log('Selected provider set to:', selectedProvider.value)
+    onProviderChange()
+  } else {
+    console.log('No providers available')
+  }
+})
 </script>
