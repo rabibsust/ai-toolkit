@@ -7,6 +7,7 @@ use App\Services\Providers\GeminiProvider;
 use App\Services\Providers\OpenAIProvider;
 use App\Services\Providers\ClaudeProvider;
 use App\Services\Providers\LMStudioProvider;
+use App\Services\Providers\OllamaProvider;
 
 class LLMProviderFactory
 {
@@ -25,6 +26,7 @@ class LLMProviderFactory
             'openai' => OpenAIProvider::class,
             'claude' => ClaudeProvider::class,
             'lmstudio' => LMStudioProvider::class,
+            'ollama' => OllamaProvider::class,
         ];
 
         // Only register providers whose classes actually exist
